@@ -14,10 +14,11 @@ const RESET = useColor ? '\x1b[0m' : ''
 
 export const RULE = '-'.repeat(60)
 
-// Strip terminal escape and control sequences from model and tool text so
-// agent output can't spoof the console. Tabs and newlines are kept.
+// Strip terminal escape sequences and C0, DEL, and C1 control characters from
+// model and tool text so agent output can't spoof the console. Tabs and
+// newlines are kept.
 function sanitize(text: string): string {
-  return text.replace(/\u001B\[[0-9;?]*[ -/]*[@-~]/g, '').replace(/[\u0000-\u0008\u000B-\u001F\u007F]/g, '')
+  return text.replace(/\u001B\[[0-9;?]*[ -/]*[@-~]/g, '').replace(/[\u0000-\u0008\u000B-\u001F\u007F-\u009F]/g, '')
 }
 
 function oneLine(text: string, max = 100): string {

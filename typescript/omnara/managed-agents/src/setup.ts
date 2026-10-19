@@ -142,6 +142,12 @@ async function main(): Promise<void> {
   )
   console.log(`Model grant for ${model.name}: ${modelGranted ? 'created' : 'already exists'}`)
 
+  if (existingSecret || existingPool) {
+    console.log(
+      '\nSetup left existing resources as they are. To change the Daytona key or pool settings, ' +
+        'run `npm run cleanup` first.',
+    )
+  }
   console.log('\nSetup is done. Run `npm run start` to launch the agent.')
 }
 

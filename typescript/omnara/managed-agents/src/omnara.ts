@@ -22,17 +22,17 @@ export function omnaraClient(): OmnaraClient {
 // The organization to work in: OMNARA_ORG_ID, or the token's only one.
 export async function resolveOrg(client: OmnaraClient): Promise<string> {
   const { data } = await sdk.listOrganizations({ client })
+  const orgs = data.data
+  if (orgs.length === 0) throw new Error("This token doesn't belong to any Omnara organization.")
+  const ids = orgs.map((item) => `${item.name} (${item.id})`).join(', ')
   const wanted = process.env.OMNARA_ORG_ID
-  const org = wanted ? data.data.find((item) => item.id === wanted) : data.data.length === 1 ? data.data[0] : undefined
-  if (!org) {
-    const ids = data.data.map((item) => `${item.name} (${item.id})`).join(', ')
-    throw new Error(
-      wanted
-        ? `OMNARA_ORG_ID ${wanted} is not one of this token's organizations: ${ids}`
-        : `This token can reach several organizations. Set OMNARA_ORG_ID to one of: ${ids}`,
-    )
+  if (wanted) {
+    const org = orgs.find((item) => item.id === wanted)
+    if (!org) throw new Error(`OMNARA_ORG_ID ${wanted} is not one of this token's organizations: ${ids}`)
+    return org.id
   }
-  return org.id
+  if (orgs.length === 1) return orgs[0].id
+  throw new Error(`This token can reach several organizations. Set OMNARA_ORG_ID to one of: ${ids}`)
 }
 
 export async function findProject(client: OmnaraClient, orgID: string): Promise<Project | undefined> {

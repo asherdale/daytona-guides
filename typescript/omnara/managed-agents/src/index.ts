@@ -35,8 +35,8 @@ async function waitForMachine(client: OmnaraClient, orgID: string, poolID: strin
     if (machine?.connection_state === 'online') return
     if (machine && ['deleting', 'delete_failed', 'deleted'].includes(machine.lifecycle_state)) {
       throw new Error(
-        "Omnara couldn't create the Daytona sandbox. Check your Daytona organization's limits at " +
-          'https://app.daytona.io/dashboard/limits and the agent in the Omnara dashboard.',
+        "Omnara couldn't create the Daytona sandbox. Check that the Daytona API key you gave setup is still " +
+          'valid, and check your Daytona limits at https://app.daytona.io/dashboard/limits.',
       )
     }
     if (machine) state = `${machine.lifecycle_state}, ${machine.connection_state}`
